@@ -1,0 +1,100 @@
+#!/bin/sh
+
+set -e
+
+echo "P: Deploying Hyprland Caelestia configuration..."
+
+# Create necessary directories
+mkdir -p /etc/skel/.config/hypr
+mkdir -p /etc/skel/.config/waybar
+mkdir -p /etc/skel/.config/swaync
+mkdir -p /etc/skel/.config/wofi
+
+# Basic Hyprland Config (Base for Caelestia look)
+cat <<EOF > /etc/skel/.config/hypr/hyprland.conf
+# KERNEL-FORGE-OS Hyprland Config (Caelestia-inspired)
+
+monitor=,highres,auto,1
+
+# Execute at launch
+exec-once = waybar
+exec-once = swaync
+exec-once = hyprpaper
+exec-once = nm-applet --indicator
+exec-once = /usr/lib/x86_64-linux-gnu/libexec/polkit-kde-authentication-agent-1
+exec-once = kde-material-you-colors --daemon
+
+# Appearance
+general {
+    gaps_in = 5
+    gaps_out = 10
+    border_size = 2
+    col.active_border = rgba(33ccffee) rgba(00ff99ee) 45deg
+    col.inactive_border = rgba(595959aa)
+    layout = dwindle
+}
+
+decoration {
+    rounding = 10
+    blur {
+        enabled = true
+        size = 8
+        passes = 3
+        new_optimizations = true
+    }
+    drop_shadow = yes
+    shadow_range = 4
+    shadow_render_power = 3
+    col.shadow = rgba(1a1a1aee)
+}
+
+animations {
+    enabled = yes
+    bezier = myBezier, 0.05, 0.9, 0.1, 1.05
+    animation = windows, 1, 7, myBezier
+    animation = windowsOut, 1, 7, default, popin 80%
+    animation = border, 1, 10, default
+    animation = fade, 1, 7, default
+    animation = workspaces, 1, 6, default
+}
+
+# Keybindings
+bind = SUPER, Q, exec, kitty
+bind = SUPER, C, killactive, 
+bind = SUPER, M, exit, 
+bind = SUPER, E, exec, thunar
+bind = SUPER, V, togglefloating, 
+bind = SUPER, R, exec, wofi --show drun
+bind = SUPER, P, pseudo, # dwindle
+bind = SUPER, J, togglesplit, # dwindle
+bind = SUPER, F, fullscreen,
+
+# Move focus
+bind = SUPER, left, movefocus, l
+bind = SUPER, right, movefocus, r
+bind = SUPER, up, movefocus, u
+bind = SUPER, down, movefocus, d
+
+# Switch workspaces
+bind = SUPER, 1, workspace, 1
+bind = SUPER, 2, workspace, 2
+bind = SUPER, 3, workspace, 3
+bind = SUPER, 4, workspace, 4
+EOF
+
+# Placeholder for Waybar theme (Caelestia style)
+cat <<EOF > /etc/skel/.config/waybar/config
+{
+    "layer": "top",
+    "position": "top",
+    "height": 30,
+    "modules-left": ["hyprland/workspaces", "hyprland/mode"],
+    "modules-center": ["clock"],
+    "modules-right": ["network", "cpu", "memory", "tray"],
+    "clock": {
+        "format": "{:%H:%M:%S}"
+    }
+}
+EOF
+
+echo "P: Hyprland Caelestia deployment complete."

@@ -58,8 +58,8 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y live-build
-      - name: Make build script executable
-        run: chmod +x ./build_iso.sh
+      - name: Make build scripts executable
+        run: chmod +x ./build_config.sh ./build_iso.sh
       - name: Build ISO
         run: |
           ./build_iso.sh

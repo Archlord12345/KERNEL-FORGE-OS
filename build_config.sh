@@ -2,6 +2,7 @@
 
 # Configuration de live-build pour KERNEL FORGE OS
 
+# Cette commande doit être exécutée à l'intérieur du répertoire live-build-config
 lb config \
   --architecture amd64 \
   --distribution bookworm \
@@ -21,24 +22,7 @@ lb config \
   --apt-options "--yes --allow-downgrades --allow-unauthenticated --allow-remove-essential --allow-change-held-packages -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold" \
   --apt-recommends false \
   --apt-secure false \
-  --updates true \
-  --backports true \
-  --security true \
-  --systemd-services "lightdm.service" \
-  --gnome-desktop false \
-  --xfce-desktop false \
-  --lxde-desktop false \
-  --lxqt-desktop false \
-  --kde-desktop true \
-  --tasksel "" \
-  --hostname "kernel-forge" \
-  --username "kernel" \
-  --fullname "KERNEL FORGE User" \
-  --password "kernel" \
   --bootappend-live "locales=fr_FR.UTF-8 keyboard-layouts=fr timezone=Europe/Paris hostname=kernel-forge username=kernel fullname='KERNEL FORGE User' password=kernel" \
   --verbose
 
-# Copier les hooks et les listes de paquets dans le répertoire de configuration live-build
-cp -r /home/ubuntu/kernel_forge_os/live-build-config/config/* ./
-
-echo "Configuration live-build terminée. Vous pouvez maintenant exécuter ./build_iso.sh pour construire l'ISO."
+echo "Configuration live-build terminée."

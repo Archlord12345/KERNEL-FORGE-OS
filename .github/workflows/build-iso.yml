@@ -21,24 +21,19 @@ jobs:
 
       - name: Prepare build environment
         run: |
-          mkdir -p /tmp/kernel_forge_os
-          cp -r live-build-config /tmp/kernel_forge_os/
-          cp build_config.sh /tmp/kernel_forge_os/
-          cp build_iso.sh /tmp/kernel_forge_os/
-          cp neofetch_logo.ascii /tmp/kernel_forge_os/
-          cp kernel_forge_wallpaper_v2.png /tmp/kernel_forge_os/live-build-config/config/includes.chroot/usr/share/pixmaps/
-          cp deepin.png /tmp/kernel_forge_os/live-build-config/config/includes.chroot/usr/share/pixmaps/kernel-forge-logo.png
-          chmod +x /tmp/kernel_forge_os/build_config.sh /tmp/kernel_forge_os/build_iso.sh
-          chmod +x /tmp/kernel_forge_os/live-build-config/config/hooks/*
+          # S'assurer que les images sont au bon endroit
+          cp kernel_forge_wallpaper_v2.png live-build-config/config/includes.chroot/usr/share/pixmaps/kernel-forge-wallpaper.png
+          cp deepin.png live-build-config/config/includes.chroot/usr/share/pixmaps/kernel-forge-logo.png
+          
+          chmod +x build_config.sh build_iso.sh
+          chmod +x live-build-config/config/hooks/*
 
       - name: Build ISO
-        working-directory: /tmp/kernel_forge_os
         run: |
-          ./build_config.sh
           ./build_iso.sh
 
       - name: Upload ISO artifact
         uses: actions/upload-artifact@v4
         with:
           name: kernel-forge-os-iso
-          path: /tmp/kernel_forge_os/live-build-config/live-image-amd64.hybrid.iso
+          path: live-build-config/*.iso

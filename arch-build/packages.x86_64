@@ -1,0 +1,66 @@
+# Base
+base
+linux
+linux-firmware
+nano
+
+# Hyprland & Caelestia
+hyprland
+waybar
+swaync
+wofi
+hyprpaper
+hyprlock
+hypridle
+xdg-desktop-portal-hyprland
+qt6-wayland
+qt5-wayland
+
+# Tools
+zsh
+fish
+starship
+fastfetch
+kitty
+thunar
+gvfs
+networkmanager
+bluez
+bluez-utils
+pipewire
+pipewire-pulse
+wireplumber
+brightnessctl
+playerctl
+polkit-kde-agent
+grim
+slurp
+wl-clipboard
+
+# Dev
+base-devel
+git
+neovim
+nodejs
+npm
+bun
+openjdk17-bin
+android-tools
+docker
+docker-compose
+
+# Wine & Nvidia
+wine
+winetricks
+dxvk-bin
+nvidia
+nvidia-utils
+nvidia-settings
+
+# Installer
+calamares
+ttf-lexend
+ttf-jetbrains-mono-nerd
+ttf-inter
+kvantum
+EOF

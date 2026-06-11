@@ -1,0 +1,20 @@
+{
+    "enabled": true,
+    "appearance": {
+        "transparency": {
+            "enabled": true,
+            "base": 0.85,
+            "layers": 0.4
+        }
+    },
+    "general": {
+        "logo": "/usr/share/backgrounds/kernel-forge/deepin.png",
+        "apps": {
+            "terminal": ["kitty"],
+            "explorer": ["thunar"]
+        }
+    },
+    "paths": {
+        "wallpaperDir": "/usr/share/backgrounds/kernel-forge"
+    }
+}

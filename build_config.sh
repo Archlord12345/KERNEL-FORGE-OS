@@ -22,9 +22,6 @@ lb config \
   --apt-options "--yes --allow-downgrades --allow-unauthenticated --allow-remove-essential --allow-change-held-packages -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold" \
   --apt-recommends false \
   --apt-secure false \
-  --updates true \
-  --security true \
-  --backports true \
   --bootappend-live "locales=fr_FR.UTF-8 keyboard-layouts=fr timezone=Europe/Paris hostname=kernel-forge username=kernel fullname='KERNEL FORGE User' password=kernel" \
   --verbose
 

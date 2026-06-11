@@ -1,0 +1,14 @@
+[Containments][1][Applets][1][Configuration][General]
+wallpaper=/usr/share/pixmaps/kernel-forge-wallpaper.png
+wallpaperMode=0
+
+[Containments][1][Applets][1][Configuration][org.kde.image.wallpaper]
+fillMode=0
+userswallpaper=/usr/share/pixmaps/kernel-forge-wallpaper.png
+
+[Containments][1][Applets][1][Configuration][org.kde.plasma.wallpaper]
+Image=file:///usr/share/pixmaps/kernel-forge-wallpaper.png
+
+[Containments][1][Applets][1][Configuration][org.kde.plasma.image]
+fillMode=0
+userswallpaper=/usr/share/pixmaps/kernel-forge-wallpaper.png

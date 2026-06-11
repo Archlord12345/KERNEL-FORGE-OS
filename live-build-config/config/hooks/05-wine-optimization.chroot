@@ -1,0 +1,29 @@
+#!/bin/sh
+
+# Install winetricks dependencies
+apt-get update
+apt-get install -y p7zip-full cabextract
+
+# Install DXVK and VKD3D for Wine
+# Note: winetricks will download these, so we just need to run the commands.
+# We will use a default WINEPREFIX in the /etc/skel directory so it's copied to new users.
+
+export WINEPREFIX="/etc/skel/.wine"
+export WINEARCH="win64"
+
+# Ensure the .wine directory exists and is writable during build
+mkdir -p "$WINEPREFIX"
+
+# Install corefonts, vcrun2019, d3dcompiler_47, etc. for broader compatibility
+winetricks -q corefonts vcrun2019 d3dcompiler_47
+
+# Install dxvk and vkd3d
+winetricks -q dxvk vkd3d
+
+# Set some common registry overrides for performance (example, adjust as needed)
+wine reg add 'HKEY_CURRENT_USER\Software\Wine\Direct3D' /v 'MaxVersionGL' /t REG_DWORD /d '00000003' /f
+wine reg add 'HKEY_CURRENT_USER\Software\Wine\Direct3D' /v 'UseGLSL' /t REG_DWORD /d '00000001' /f
+wine reg add 'HKEY_CURRENT_USER\Software\Wine\Direct3D' /v 'StrictDrawOrdering' /t REG_DWORD /d '00000001' /f
+
+# Ensure the WINEPREFIX is owned by the correct user after copying to /home/user
+# This will be handled by live-build's skel copying mechanism for new users.

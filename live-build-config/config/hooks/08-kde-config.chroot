@@ -1,0 +1,29 @@
+#!/bin/sh
+
+# Set default KDE Plasma theme to Breeze Dark with blue accents
+# This assumes Breeze Dark is installed with kde-plasma-desktop
+
+# Set global theme
+kwriteconfig5 --file kdeglobals --group "General" --key "ColorScheme" "BreezeDark"
+kwriteconfig5 --file kdeglobals --group "General" --key "Theme" "breeze-dark"
+kwriteconfig5 --file kdeglobals --group "Icons" --key "Theme" "breeze-dark"
+kwriteconfig5 --file kdeglobals --group "Cursors" --key "Theme" "breeze_cursors"
+
+# Set wallpaper
+kwriteconfig5 --file plasma-org.kde.plasma.desktop-appletsrc --group "Containments" --group "1" --group "Applets" --group "1" --group "Configuration" --group "General" --key "wallpaper" "file:///usr/share/pixmaps/kernel-forge-wallpaper.png"
+kwriteconfig5 --file plasma-org.kde.plasma.desktop-appletsrc --group "Containments" --group "1" --group "Applets" --group "1" --group "Configuration" --group "org.kde.image.wallpaper" --key "userswallpaper" "file:///usr/share/pixmaps/kernel-forge-wallpaper.png"
+kwriteconfig5 --file plasma-org.kde.plasma.desktop-appletsrc --group "Containments" --group "1" --group "Applets" --group "1" --group "Configuration" --group "org.kde.plasma.wallpaper" --key "Image" "file:///usr/share/pixmaps/kernel-forge-wallpaper.png"
+kwriteconfig5 --file plasma-org.kde.plasma.desktop-appletsrc --group "Containments" --group "1" --group "Applets" --group "1" --group "Configuration" --group "org.kde.plasma.image" --key "userswallpaper" "file:///usr/share/pixmaps/kernel-forge-wallpaper.png"
+
+# Set accent color (requires Plasma 5.23+)
+kwriteconfig5 --file kdeglobals --group "Colors:Window" --key "BackgroundNormal" "#262626"
+kwriteconfig5 --file kdeglobals --group "Colors:Window" --key "ForegroundNormal" "#fcfcfc"
+kwriteconfig5 --file kdeglobals --group "Colors:View" --key "BackgroundNormal" "#262626"
+kwriteconfig5 --file kdeglobals --group "Colors:View" --key "ForegroundNormal" "#fcfcfc"
+kwriteconfig5 --file kdeglobals --group "Colors:Button" --key "BackgroundNormal" "#313131"
+kwriteconfig5 --file kdeglobals --group "Colors:Button" --key "ForegroundNormal" "#fcfcfc"
+kwriteconfig5 --file kdeglobals --group "Colors:Selection" --key "BackgroundNormal" "#3daee9" # Blue accent
+kwriteconfig5 --file kdeglobals --group "Colors:Selection" --key "ForegroundNormal" "#ffffff"
+
+# Ensure the config files are correctly placed for new users
+# This will be handled by live-build's skel copying mechanism for new users.

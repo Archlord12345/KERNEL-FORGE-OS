@@ -1,4 +1,4 @@
-name: Build KERNEL FORGE OS ISO
+name: KERNEL-FORGE-OS Build Pipeline
 
 on:
   push:
@@ -7,32 +7,57 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-iso:
+  dependencies:
     runs-on: ubuntu-latest
-
+    outputs:
+      artifact_id: ${{ steps.save.outputs.artifact_id }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Install live-build and dependencies
+      - uses: actions/checkout@v4
+      - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y ca-certificates curl live-build git p7zip-full cabextract
+      - name: Cache environment
+        id: save
+        uses: actions/upload-artifact@v4
+        with:
+          name: env-state
+          path: .
+          retention-days: 1
 
-      - name: Prepare build environment
+  prepare:
+    needs: dependencies
+    runs-on: ubuntu-latest
+    outputs:
+      artifact_id: ${{ steps.save.outputs.artifact_id }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: env-state
+      - name: Prepare environment
         run: |
-          # S'assurer que les images sont au bon endroit
+          chmod +x build_config.sh build_iso.sh live-build-config/config/hooks/*
           cp kernel_forge_wallpaper_v2.png live-build-config/config/includes.chroot/usr/share/pixmaps/kernel-forge-wallpaper.png
           cp deepin.png live-build-config/config/includes.chroot/usr/share/pixmaps/kernel-forge-logo.png
-          
-          chmod +x build_config.sh build_iso.sh
-          chmod +x live-build-config/config/hooks/*
+      - name: Cache prepared environment
+        id: save
+        uses: actions/upload-artifact@v4
+        with:
+          name: prepared-state
+          path: .
+          retention-days: 1
 
+  build:
+    needs: prepare
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: prepared-state
       - name: Build ISO
         run: |
           ./build_iso.sh
-
-      - name: Upload ISO artifact
+      - name: Upload ISO
         uses: actions/upload-artifact@v4
         with:
           name: kernel-forge-os-iso

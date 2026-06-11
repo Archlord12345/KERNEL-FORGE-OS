@@ -16,15 +16,19 @@ jobs:
 
       - name: Install live-build and dependencies
         run: |
-          # Supprimer les dépôts problématiques temporairement
+          # Install ca-certificates first to fix certificate verification
+          sudo apt-get update --allow-unauthenticated || true
+          sudo apt-get install -y ca-certificates curl --allow-unauthenticated || true
+          sudo update-ca-certificates
+          
+          # Remove problematic repository sources
           sudo rm -f /etc/apt/sources.list.d/microsoft-ubuntu-*.list
           sudo rm -f /etc/apt/sources.list.d/*antigravity*.list
           sudo rm -f /etc/apt/sources.list.d/nodesource.list
+          
+          # Clean and update with proper certificates
           sudo apt-get clean
           sudo rm -rf /var/lib/apt/lists/*
-          sudo apt-get update
-          sudo apt-get install -y ca-certificates curl
-          sudo update-ca-certificates
           sudo apt-get update
           sudo apt-get install -y live-build git p7zip-full cabextract
 

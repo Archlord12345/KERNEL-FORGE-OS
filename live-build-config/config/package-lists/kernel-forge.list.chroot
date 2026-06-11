@@ -2,6 +2,8 @@ xvfb
 libgl1-mesa-dri
 xauth
 x11-utils
+calamares
+calamares-settings-debian
 kde-plasma-desktop
 hyprland
 waybar

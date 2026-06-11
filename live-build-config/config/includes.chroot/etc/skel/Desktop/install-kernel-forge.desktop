@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Installer KERNEL-FORGE-OS
+GenericName=Install the operating system
+Comment=Graphical installer for KERNEL-FORGE-OS
+Exec=sudo calamares
+Icon=kernel-forge-logo
+Terminal=false
+Type=Application
+Categories=System;
+X-KDE-SubstituteUID=false

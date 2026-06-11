@@ -1,4 +1,4 @@
-name: KERNEL-FORGE-OS Build Pipeline
+name: KERNEL-FORGE-OS Arch Build Pipeline
 
 on:
   push:
@@ -7,68 +7,23 @@ on:
   workflow_dispatch:
 
 jobs:
-  dependencies:
+  build:
     runs-on: ubuntu-latest
-    outputs:
-      artifact_id: ${{ steps.save.outputs.artifact_id }}
+    container: archlinux:latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install dependencies
+      
+      - name: Install build dependencies
         run: |
-          sudo rm -rf /var/lib/apt/lists/*
-          sudo apt-get clean
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends curl live-build git p7zip-full cabextract
-      - name: Cache environment
-        id: save
-        uses: actions/upload-artifact@v4
-        with:
-          name: env-state
-          path: .
-          retention-days: 1
-
-  prepare:
-    needs: dependencies
-    runs-on: ubuntu-latest
-    outputs:
-      artifact_id: ${{ steps.save.outputs.artifact_id }}
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: env-state
-      - name: Prepare environment
-        run: |
-          chmod +x build_config.sh build_iso.sh live-build-config/config/hooks/*
-          cp kernel_forge_wallpaper_v2.png live-build-config/config/includes.chroot/usr/share/pixmaps/kernel-forge-wallpaper.png
-          cp deepin.png live-build-config/config/includes.chroot/usr/share/pixmaps/kernel-forge-logo.png
-      - name: Cache prepared environment
-        id: save
-        uses: actions/upload-artifact@v4
-        with:
-          name: prepared-state
-          path: .
-          retention-days: 1
-
-  build:
-    needs: prepare
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: prepared-state
-      - name: Install dependencies
-        run: |
-          sudo rm -rf /var/lib/apt/lists/*
-          sudo apt-get clean
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends live-build
-      - name: Make build scripts executable
-        run: chmod +x ./build_config.sh ./build_iso.sh
+          pacman -Sy --noconfirm archiso base-devel
+          
       - name: Build ISO
         run: |
-          ./build_iso.sh
+          # Build using mkarchiso
+          mkarchiso -v -w /tmp/archiso-tmp -o out/ arch-build/
+          
       - name: Upload ISO
         uses: actions/upload-artifact@v4
         with:
-          name: kernel-forge-os-iso
-          path: live-build-config/*.iso
+          name: kernel-forge-os-arch-iso
+          path: out/*.iso

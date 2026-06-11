@@ -1,9 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=Install KERNEL FORGE OS
-GenericName=System Installer
-Keywords=calamares;installer;arch;
-Exec=sudo calamares
-Icon=calamares
-Terminal=false
-Categories=System;

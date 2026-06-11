@@ -16,9 +16,13 @@ jobs:
 
       - name: Install live-build and dependencies
         run: |
+          # Supprimer les dépôts problématiques temporairement
+          sudo rm -f /etc/apt/sources.list.d/microsoft-ubuntu-*.list
+          sudo rm -f /etc/apt/sources.list.d/*antigravity*.list
+          sudo rm -f /etc/apt/sources.list.d/nodesource.list
           sudo apt-get clean
           sudo rm -rf /var/lib/apt/lists/*
-          sudo apt-get update --allow-insecure-repositories || true
+          sudo apt-get update
           sudo apt-get install -y ca-certificates curl
           sudo update-ca-certificates
           sudo apt-get update

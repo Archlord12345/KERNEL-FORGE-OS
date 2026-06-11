@@ -15,9 +15,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install dependencies
         run: |
-          sudo apt-get install -y ca-certificates
-          sudo apt-get update
-          sudo apt-get install -y curl live-build git p7zip-full cabextract
+          sudo apt-get update -o Apt::Get::AllowUnauthenticated=true
+          sudo apt-get install -y --allow-unauthenticated curl live-build git p7zip-full cabextract
       - name: Cache environment
         id: save
         uses: actions/upload-artifact@v4
@@ -57,9 +56,8 @@ jobs:
           name: prepared-state
       - name: Install dependencies
         run: |
-          sudo apt-get install -y ca-certificates
-          sudo apt-get update
-          sudo apt-get install -y live-build
+          sudo apt-get update -o Apt::Get::AllowUnauthenticated=true
+          sudo apt-get install -y --allow-unauthenticated live-build
       - name: Make build scripts executable
         run: chmod +x ./build_config.sh ./build_iso.sh
       - name: Build ISO

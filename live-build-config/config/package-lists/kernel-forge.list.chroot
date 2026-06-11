@@ -1,3 +1,7 @@
+xvfb
+libgl1-mesa-dri
+xauth
+x11-utils
 kde-plasma-desktop
 hyprland
 waybar

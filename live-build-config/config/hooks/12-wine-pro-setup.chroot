@@ -2,19 +2,43 @@
 
 set -e
 
-echo "P: Configuring Ultimate Wine environment..."
+echo "P: Starting Ultimate Wine pre-configuration (VC++, .NET, DXVK)..."
 
-# Note: Wine prefix initialization is usually per-user, 
-# so we prepare the environment variables and scripts.
+# Configuration des variables pour le chroot
+export WINEARCH=win64
+export WINEPREFIX=/etc/skel/.wine
+export WINEDEBUG=-all
+export HOME=/tmp
 
-cat <<EOF > /etc/profile.d/wine-pro.sh
+# S'assurer que le répertoire skel existe
+mkdir -p /etc/skel
+
+# Initialiser le préfixe Wine (mode silencieux)
+wineboot -i
+
+# Installer les composants essentiels via winetricks
+# - corefonts: Polices de base
+# - vcrun2015, vcrun2017, vcrun2022: Visual C++ Redistributables
+# - dotnet48: .NET Framework 4.8
+# - dxvk: DirectX 9/10/11 vers Vulkan
+echo "P: Installing corefonts, Visual C++ and DXVK..."
+xvfb-run -a winetricks -q corefonts vcrun2015 vcrun2017 vcrun2022 dxvk || echo "W: Winetricks had some non-fatal issues"
+
+# Note: .NET 4.8 est très long à installer en chroot et peut échouer sur certains serveurs CI
+# Nous l'ajoutons mais avec une tolérance d'échec
+echo "P: Installing .NET 4.8 (this may take a while)..."
+xvfb-run -a winetricks -q dotnet48 || echo "W: .NET 4.8 installation skipped or failed"
+
+# Nettoyage des fichiers temporaires winetricks pour réduire la taille de l'ISO
+rm -rf /tmp/.wine-*
+rm -rf /tmp/winetricks
+
+# Définir les variables d'environnement globales pour tous les utilisateurs
+mkdir -p /etc/profile.d
+cat <<EOF > /etc/profile.d/wine-ultimate.sh
 export WINEPREFIX=\$HOME/.wine
 export WINEARCH=win64
-# Enable DXVK for better performance if drivers are present
 export WINEDEBUG=-all
 EOF
 
-# Pre-download DXVK into a common location (optional, but good for speed)
-# For now, we rely on the winetricks package being available for the user.
-
-echo "P: Ultimate Wine environment preparation complete."
+echo "P: Ultimate Wine pre-configuration complete."

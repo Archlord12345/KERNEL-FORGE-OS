@@ -70,39 +70,35 @@ jobs:
 
           QEMU_PID=$!
 
-          echo "Waiting for boot stages..."
+          echo "Waiting for boot to complete..."
 
-          # Function to wait for monitor and take screenshot
-          take_screenshot() {
-            local name=$1
-            local timeout=$2
-            local start_time=$(date +%s)
-            while true; do
-              if [ -S qemu-monitor.sock ]; then
-                echo "screendump screenshots/${name}.ppm" | socat - UNIX-CONNECT:qemu-monitor.sock && break
-              fi
-              if [ $(($(date +%s) - start_time)) -gt $timeout ]; then
-                echo "Timeout waiting for monitor for $name"
-                break
-              fi
-              sleep 5
-            done
-          }
+          # Wait for Multi-User System target with extended timeout
+          BOOT_TIMEOUT=600  # 10 minutes maximum
+          START_TIME=$(date +%s)
 
-          # Stage 1: Early Boot
-          sleep 30
-          take_screenshot "boot_stage_1" 10
+          while true; do
+            if grep -q "Reached target Multi-User System" serial.log 2>/dev/null; then
+              echo "Boot completed successfully!"
+              break
+            fi
 
-          # Stage 2: Kernel/Init
-          sleep 30
-          take_screenshot "boot_stage_2" 10
+            ELAPSED=$(($(date +%s) - START_TIME))
+            if [ $ELAPSED -gt $BOOT_TIMEOUT ]; then
+              echo "Boot timeout after ${BOOT_TIMEOUT}s"
+              break
+            fi
 
-          # Stage 3: System Init
-          sleep 30
-          take_screenshot "boot_stage_3" 10
+            sleep 10
+          done
+
+          # Take a final screenshot after boot
+          sleep 5
+          if [ -S qemu-monitor.sock ]; then
+            echo "screendump screenshots/final.ppm" | socat - UNIX-CONNECT:qemu-monitor.sock
+          fi
 
           # Cleanup
-          kill $QEMU_PID
+          kill $QEMU_PID 2>/dev/null || true
 
           # Convert PPM to PNG
           for f in screenshots/*.ppm; do

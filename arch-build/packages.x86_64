@@ -9,24 +9,16 @@ base
 linux
 linux-firmware
 nano
+sudo
+git
 
-# Hyprland & Caelestia
+# Hyprland & UI
 hyprland
-waybar
-swaync
-wofi
-hyprpaper
 hyprlock
 hypridle
-xdg-desktop-portal-hyprland
-qt6-wayland
-qt5-wayland
-
-# Tools
-zsh
-fish
-starship
-fastfetch
+waybar
+swaybg
+wofi
 kitty
 thunar
 gvfs
@@ -42,30 +34,63 @@ polkit-kde-agent
 grim
 slurp
 wl-clipboard
+xdg-desktop-portal-hyprland
+qt6-wayland
+qt5-wayland
+
+# Zsh & Tools
+zsh
+zsh-autosuggestions
+zsh-syntax-highlighting
+fastfetch
+chafa
+neofetch
+starship
+htop
+neovim
 
 # Dev
 base-devel
-git
-neovim
 nodejs
 npm
 bun
-openjdk17-bin
-android-tools
-docker
-docker-compose
 
-# Wine & Nvidia
+# Wine
 wine
 winetricks
-dxvk-bin
+wine-mono
+wine-gecko
+samba
+lib32-gnutls
+lib32-libx11
+lib32-libpulse
+
+# GPU Drivers (Intel, AMD, Nvidia)
+mesa
+lib32-mesa
+xf86-video-intel
+intel-media-driver
+vulkan-intel
+lib32-vulkan-intel
+xf86-video-amdgpu
+vulkan-radeon
+lib32-vulkan-radeon
+libva-mesa-driver
+lib32-libva-mesa-driver
+mesa-vdpau
+lib32-mesa-vdpau
 nvidia
 nvidia-utils
+lib32-nvidia-utils
 nvidia-settings
+vulkan-icd-loader
+lib32-vulkan-icd-loader
 
-# Installer
+# Installer & Fonts
 calamares
 ttf-lexend
 ttf-jetbrains-mono-nerd
 ttf-inter
-kvantum
+noto-fonts
+noto-fonts-emoji
+noto-fonts-cjk

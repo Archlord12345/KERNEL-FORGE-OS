@@ -27,3 +27,71 @@ jobs:
         with:
           name: kernel-forge-os-arch-iso
           path: out/*.iso
+
+  test-iso:
+    needs: build
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+    steps:
+      - name: Download ISO
+        uses: actions/download-artifact@v4
+        with:
+          name: kernel-forge-os-arch-iso
+          path: iso-artifact
+
+      - name: Install verification tools
+        run: pacman -Sy --noconfirm libisoburn qemu-desktop edk2-ovmf imagemagick socat
+
+      - name: Verify ISO structure and bootability
+        run: |
+          ISO_FILE=$(ls iso-artifact/*.iso)
+          echo "Checking ISO: $ISO_FILE"
+          xorriso -indev "$ISO_FILE" -toc
+          xorriso -indev "$ISO_FILE" -report_el_torito as_mksisohybrid
+          xorriso -indev "$ISO_FILE" -check_media --
+
+      - name: Boot test and Capture Screenshots
+        run: |
+          ISO_FILE=$(ls iso-artifact/*.iso)
+          mkdir -p screenshots
+
+          # Start QEMU in background with monitor on a socket
+          qemu-system-x86_64 \
+            -m 2G \
+            -cdrom "$ISO_FILE" \
+            -boot d \
+            -display none \
+            -vga virtio \
+            -monitor unix:qemu-monitor.sock,server,nowait &
+
+          QEMU_PID=$!
+
+          echo "Waiting for boot stages..."
+
+          # Stage 1: Bootloader/Early Boot (after 30s)
+          sleep 30
+          echo "screendump screenshots/boot_stage_1.ppm" | socat - UNIX-CONNECT:qemu-monitor.sock
+
+          # Stage 2: Kernel/Init (after 60s)
+          sleep 60
+          echo "screendump screenshots/boot_stage_2.ppm" | socat - UNIX-CONNECT:qemu-monitor.sock
+
+          # Stage 3: System Init (after 90s)
+          sleep 90
+          echo "screendump screenshots/boot_stage_3.ppm" | socat - UNIX-CONNECT:qemu-monitor.sock
+
+          # Cleanup
+          kill $QEMU_PID
+
+          # Convert PPM to PNG
+          for f in screenshots/*.ppm; do
+            convert "$f" "${f%.ppm}.png"
+            rm "$f"
+          done
+
+      - name: Upload Screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: boot-screenshots
+          path: screenshots/*.png

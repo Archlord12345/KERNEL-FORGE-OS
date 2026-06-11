@@ -30,6 +30,9 @@ sed -i 's/PRETTY_NAME="Arch Linux"/PRETTY_NAME="KERNEL FORGE OS - FULLSTACK DEVE
 systemctl enable NetworkManager
 systemctl enable bluetooth
 
+# Generate Locales
+locale-gen
+
 # Wine Optimization Pre-configuration
 # Set default WINEPREFIX for the forge user
 su - forge -c "mkdir -p /home/forge/.wine"

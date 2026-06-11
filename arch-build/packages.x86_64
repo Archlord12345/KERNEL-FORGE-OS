@@ -1,3 +1,9 @@
+# Boot
+syslinux
+memtest86+
+memtest86+-efi
+edk2-shell
+
 # Base
 base
 linux
@@ -63,4 +69,3 @@ ttf-lexend
 ttf-jetbrains-mono-nerd
 ttf-inter
 kvantum
-EOF

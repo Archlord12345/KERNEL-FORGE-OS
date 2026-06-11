@@ -14,7 +14,12 @@ cd "${PROJECT_ROOT}/live-build-config"
 sudo lb clean --purge
 
 # Exécuter la configuration (on appelle build_config.sh qui est à la racine)
-sudo "${PROJECT_ROOT}/build_config.sh"
+if [ -f "${PROJECT_ROOT}/build_config.sh" ]; then
+    sudo "${PROJECT_ROOT}/build_config.sh"
+else
+    echo "Erreur : ${PROJECT_ROOT}/build_config.sh non trouvé."
+    exit 1
+fi
 
 # Construire l'ISO
 sudo lb build

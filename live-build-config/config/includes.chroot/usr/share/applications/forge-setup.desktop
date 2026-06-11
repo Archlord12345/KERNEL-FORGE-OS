@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Forge Control Panel
+Comment=Automation for Developers and Wine
+Exec=kitty -e forge-setup
+Icon=kernel-forge-logo
+Terminal=false
+Type=Application
+Categories=Development;System;

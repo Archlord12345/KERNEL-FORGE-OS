@@ -1,0 +1,20 @@
+#!/bin/sh
+
+set -e
+
+echo "P: Configuring Ultimate Wine environment..."
+
+# Note: Wine prefix initialization is usually per-user, 
+# so we prepare the environment variables and scripts.
+
+cat <<EOF > /etc/profile.d/wine-pro.sh
+export WINEPREFIX=\$HOME/.wine
+export WINEARCH=win64
+# Enable DXVK for better performance if drivers are present
+export WINEDEBUG=-all
+EOF
+
+# Pre-download DXVK into a common location (optional, but good for speed)
+# For now, we rely on the winetricks package being available for the user.
+
+echo "P: Ultimate Wine environment preparation complete."

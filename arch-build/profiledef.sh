@@ -1,7 +1,7 @@
 iso_name="kernel-forge-os"
 iso_label="KERNEL_FORGE_OS"
-iso_publisher="Archlord12345"
-iso_application="KERNEL-FORGE-OS"
+iso_publisher="NGHOMSI FEUKOUO RAVEL"
+iso_application="KERNEL FORGE OS - FULLSTACK DEVELOPPER Edition"
 iso_version="1.0.0"
 install_dir="arch"
 bootmodes=('bios.syslinux' 'uefi.systemd-boot')

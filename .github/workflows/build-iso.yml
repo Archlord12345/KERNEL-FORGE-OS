@@ -48,7 +48,7 @@ jobs:
           ISO_FILE=$(ls iso-artifact/*.iso)
           echo "Checking ISO: $ISO_FILE"
           xorriso -indev "$ISO_FILE" -toc
-          xorriso -indev "$ISO_FILE" -report_el_torito as_mksisohybrid
+          xorriso -indev "$ISO_FILE" -report_el_torito as_mkisofs
           xorriso -indev "$ISO_FILE" -check_media --
 
       - name: Boot test and Capture Screenshots

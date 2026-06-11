@@ -1,0 +1,62 @@
+#!/bin/sh
+
+set -e
+
+echo "P: Starting Caelestia-style transformation..."
+
+# Install kde-material-you-colors
+pip3 install --break-system-packages kde-material-you-colors || true
+
+# Pre-download a futurist global theme (Sweet KDE)
+# Note: In a chroot, we can't use 'plasma-apply-lookandfeel', so we just prepare files.
+mkdir -p /usr/share/plasma/look-and-feel
+# We could download and extract themes here, but for now we'll focus on the Material You integration
+# which is the core of Caelestia.
+
+# Setup autostart for Material You colors
+mkdir -p /etc/skel/.config/autostart
+cat <<EOF > /etc/skel/.config/autostart/kde-material-you-colors.desktop
+[Desktop Entry]
+Type=Application
+Exec=kde-material-you-colors --daemon
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+Name=KDE Material You Colors
+Comment=Dynamic colors based on wallpaper
+EOF
+
+# Configuration for Kvantum (Glass look)
+mkdir -p /etc/skel/.config/Kvantum
+cat <<EOF > /etc/skel/.config/Kvantum/kvantum.kvconfig
+[General]
+theme=Sweet
+EOF
+
+# Force dark theme and Blur effect via kdeglobals
+mkdir -p /etc/skel/.config
+cat <<EOF >> /etc/skel/.config/kdeglobals
+[General]
+ColorScheme=BreezeDark
+Name=Breeze Dark
+accentColor=#3daee9
+
+[KDE]
+LookAndFeelPackage=com.github.elivelinux.sweet
+EOF
+
+# Configuration for rounded corners and effects (KWin)
+cat <<EOF > /etc/skel/.config/kwinrc
+[Plugins]
+blurEnabled=true
+magiclampEnabled=true
+wobblywindowsEnabled=false
+
+[Effect-blur]
+BlurStrength=10
+
+[Effect-rounded-corners]
+Enabled=true
+EOF
+
+echo "P: Caelestia-style transformation complete."

@@ -14,6 +14,8 @@ keyboard-configuration
 fonts-dejavu
 fonts-noto
 fonts-freefont-ttf
+fonts-inter
+fonts-lexend
 apt-transport-https
 cabextract
 wine-stable
@@ -24,7 +26,13 @@ bun
 code
 antigravity
 p7zip-full
-cabextract
 neofetch
 git
 kwriteconfig5
+qt5-style-kvantum
+python3-pip
+python3-pyqt5
+python3-dev
+libmagickwand-dev
+imagemagick
+plasma-widgets-addons

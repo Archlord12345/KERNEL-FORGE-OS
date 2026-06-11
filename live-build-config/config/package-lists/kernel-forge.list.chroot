@@ -4,6 +4,10 @@ xauth
 x11-utils
 calamares
 calamares-settings-debian
+fastfetch
+zsh-autosuggestions
+zsh-syntax-highlighting
+chafa
 kde-plasma-desktop
 hyprland
 waybar

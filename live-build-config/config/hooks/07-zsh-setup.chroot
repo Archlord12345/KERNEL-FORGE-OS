@@ -1,24 +1,80 @@
 #!/bin/sh
 
-# Set fish as default shell for the live user (kernel)
-# This hook runs in the chroot environment
+set -e
 
+echo "P: Configuring beautiful ZSH environment..."
+
+# Set ZSH as default shell for the live user (kernel)
 if getent passwd kernel > /dev/null; then
-    chsh -s /usr/bin/fish kernel
+    chsh -s /usr/bin/zsh kernel
 fi
 
-# Also set fish for root
-chsh -s /usr/bin/fish root
+# Also set ZSH for root
+chsh -s /usr/bin/zsh root
 
-# Ensure etc/skel has the right setup
-mkdir -p /etc/skel/.config/fish
-cat <<EOF > /etc/skel/.config/fish/config.fish
-if status is-interactive
-    starship init fish | source
-    fastfetch
-end
+# Create etc/skel/.zshrc
+mkdir -p /etc/skel
+cat <<'EOF' > /etc/skel/.zshrc
+# KERNEL-FORGE OS ZSH Configuration
 
-# Environment variables for Caelestia
-set -gx CAELESTIA_HOME \$HOME/.local/share/caelestia
-set -gx PATH \$PATH \$HOME/.local/bin
+# Beautiful Prompt (Minimalist & Futuriste)
+PROMPT='%F{cyan}%n%f@%F{blue}kernel-forge%f %F{green}%~%f %F{yellow}❯%f '
+
+# Plugins
+source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh 2>/dev/null
+source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh 2>/dev/null
+
+# History
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
+setopt APPEND_HISTORY
+setopt SHARE_HISTORY
+
+# Aliases
+alias ls='ls --color=auto'
+alias ll='ls -lah'
+alias forge='forge-setup'
+
+# Auto-launch fastfetch with system logo
+if [[ -x /usr/bin/fastfetch ]]; then
+    fastfetch --logo /usr/share/pixmaps/kernel-forge-logo.png --logo-type chafa --logo-width 30
+fi
+
+# Optionnel: neofetch
+# alias neofetch='neofetch --backend chafa --source /usr/share/pixmaps/kernel-forge-logo.png'
 EOF
+
+# Configuration Fastfetch (System wide)
+mkdir -p /etc/fastfetch
+cat <<EOF > /etc/fastfetch/config.jsonc
+{
+    "\$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+    "logo": {
+        "source": "/usr/share/pixmaps/kernel-forge-logo.png",
+        "type": "chafa",
+        "width": 30
+    },
+    "modules": [
+        "title",
+        "separator",
+        "os",
+        "host",
+        "kernel",
+        "uptime",
+        "packages",
+        "shell",
+        "display",
+        "de",
+        "wm",
+        "terminal",
+        "cpu",
+        "gpu",
+        "memory",
+        "break",
+        "colors"
+    ]
+}
+EOF
+
+echo "P: ZSH configuration complete."

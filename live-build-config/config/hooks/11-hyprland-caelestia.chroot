@@ -52,6 +52,9 @@ exec-once = hyprpaper
 exec-once = nm-applet --indicator
 exec-once = /usr/lib/x86_64-linux-gnu/libexec/polkit-kde-authentication-agent-1
 
+# Bindings
+bind = SUPER, L, exec, hyprlock
+
 # Appearance and other settings are inherited from the Caelestia dotfiles
 source = ~/.local/share/caelestia/hypr/hyprland.conf
 EOF

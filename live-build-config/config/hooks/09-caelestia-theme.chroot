@@ -7,12 +7,6 @@ echo "P: Starting Caelestia-style transformation..."
 # Install kde-material-you-colors
 pip3 install --break-system-packages kde-material-you-colors || true
 
-# Pre-download a futurist global theme (Sweet KDE)
-# Note: In a chroot, we can't use 'plasma-apply-lookandfeel', so we just prepare files.
-mkdir -p /usr/share/plasma/look-and-feel
-# We could download and extract themes here, but for now we'll focus on the Material You integration
-# which is the core of Caelestia.
-
 # Setup autostart for Material You colors
 mkdir -p /etc/skel/.config/autostart
 cat <<EOF > /etc/skel/.config/autostart/kde-material-you-colors.desktop
@@ -57,6 +51,35 @@ BlurStrength=10
 
 [Effect-rounded-corners]
 Enabled=true
+EOF
+
+# Neofetch Custom Config with Logo
+mkdir -p /etc/skel/.config/neofetch
+cat <<EOF > /etc/skel/.config/neofetch/config.conf
+print_info() {
+    info title
+    info underline
+    info "OS" os
+    info "Host" model
+    info "Kernel" kernel
+    info "Uptime" uptime
+    info "Packages" packages
+    info "Shell" shell
+    info "Resolution" resolution
+    info "DE" de
+    info "WM" wm
+    info "WM Theme" wm_theme
+    info "Theme" theme
+    info "Icons" icons
+    info "Terminal" term
+    info "CPU" cpu
+    info "GPU" gpu
+    info "Memory" memory
+    info cols
+}
+image_backend="chafa"
+image_source="/usr/share/pixmaps/kernel-forge-logo.png"
+image_size="300px"
 EOF
 
 echo "P: Caelestia-style transformation complete."

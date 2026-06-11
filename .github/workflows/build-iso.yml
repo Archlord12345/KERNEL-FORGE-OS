@@ -19,6 +19,7 @@ jobs:
       - name: Build ISO
         run: |
           pacman -Sy --noconfirm archiso
+          pacman -Sy  # Refresh package databases
           mkdir -p out
           mkarchiso -v -w /tmp/archiso-workspace -o out ./arch-build
           

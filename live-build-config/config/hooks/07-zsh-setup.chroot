@@ -1,42 +1,24 @@
 #!/bin/sh
 
-# Set zsh as default shell for new users
-echo "zsh" >> /etc/shells
-chsh -s /bin/zsh root
+# Set fish as default shell for the live user (kernel)
+# This hook runs in the chroot environment
 
-# Install Oh My Zsh for root user
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" ""
+if getent passwd kernel > /dev/null; then
+    chsh -s /usr/bin/fish kernel
+fi
 
-# Configure .zshrc for root user
-cat << EOF > /root/.zshrc
-export ZSH="/root/.oh-my-zsh"
-ZSH_THEME="agnoster"
-plugins=(git zsh-autosuggestions zsh-syntax-highlighting)
-source "$ZSH/oh-my-zsh.sh"
+# Also set fish for root
+chsh -s /usr/bin/fish root
 
-# Neofetch configuration
-neofetch --ascii "/usr/share/pixmaps/neofetch_logo.ascii" --ascii_colors "$(tput setaf 4)" "$(tput setaf 7)" "$(tput setaf 4)" "$(tput setaf 7)" "$(tput setaf 4)" "$(tput setaf 7)"
+# Ensure etc/skel has the right setup
+mkdir -p /etc/skel/.config/fish
+cat <<EOF > /etc/skel/.config/fish/config.fish
+if status is-interactive
+    starship init fish | source
+    fastfetch
+end
+
+# Environment variables for Caelestia
+set -gx CAELESTIA_HOME \$HOME/.local/share/caelestia
+set -gx PATH \$PATH \$HOME/.local/bin
 EOF
-
-# Install Oh My Zsh for /etc/skel (new users)
-OH_MY_ZSH_DIR="/etc/skel/.oh-my-zsh"
-mkdir -p "$OH_MY_ZSH_DIR"
-cp -r /root/.oh-my-zsh/* "$OH_MY_ZSH_DIR/"
-
-# Configure .zshrc for new users
-cat << EOF > /etc/skel/.zshrc
-export ZSH="/home/kernel/.oh-my-zsh"
-ZSH_THEME="agnoster"
-plugins=(git zsh-autosuggestions zsh-syntax-highlighting)
-source "$ZSH/oh-my-zsh.sh"
-
-# Neofetch configuration
-neofetch --ascii "/usr/share/pixmaps/neofetch_logo.ascii" --ascii_colors "$(tput setaf 4)" "$(tput setaf 7)" "$(tput setaf 4)" "$(tput setaf 7)" "$(tput setaf 4)" "$(tput setaf 7)"
-EOF
-
-# Copy neofetch ASCII art to /usr/share/pixmaps
-cp /home/ubuntu/kernel_forge_os/neofetch_logo.ascii /usr/share/pixmaps/neofetch_logo.ascii
-
-# Install zsh-autosuggestions and zsh-syntax-highlighting
-git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting

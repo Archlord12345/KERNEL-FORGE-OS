@@ -54,6 +54,8 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: prepared-state
+      - name: Make build script executable
+        run: chmod +x ./build_iso.sh
       - name: Build ISO
         run: |
           ./build_iso.sh

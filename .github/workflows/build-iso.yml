@@ -28,6 +28,7 @@ jobs:
         with:
           name: kernel-forge-os-arch-iso
           path: out/*.iso
+          retention-days: 3
 
   test-iso:
     needs: build
@@ -57,30 +58,48 @@ jobs:
           ISO_FILE=$(ls iso-artifact/*.iso)
           mkdir -p screenshots
 
-          # Start QEMU in background with monitor on a socket
+          # Start QEMU in background with monitor on a socket and serial to file
           qemu-system-x86_64 \
             -m 2G \
             -cdrom "$ISO_FILE" \
             -boot d \
             -display none \
             -vga virtio \
+            -serial file:serial.log \
             -monitor unix:qemu-monitor.sock,server,nowait &
 
           QEMU_PID=$!
 
           echo "Waiting for boot stages..."
 
-          # Stage 1: Bootloader/Early Boot (after 30s)
+          # Function to wait for monitor and take screenshot
+          take_screenshot() {
+            local name=$1
+            local timeout=$2
+            local start_time=$(date +%s)
+            while true; do
+              if [ -S qemu-monitor.sock ]; then
+                echo "screendump screenshots/${name}.ppm" | socat - UNIX-CONNECT:qemu-monitor.sock && break
+              fi
+              if [ $(($(date +%s) - start_time)) -gt $timeout ]; then
+                echo "Timeout waiting for monitor for $name"
+                break
+              fi
+              sleep 5
+            done
+          }
+
+          # Stage 1: Early Boot
           sleep 30
-          echo "screendump screenshots/boot_stage_1.ppm" | socat - UNIX-CONNECT:qemu-monitor.sock
+          take_screenshot "boot_stage_1" 10
 
-          # Stage 2: Kernel/Init (after 60s)
-          sleep 60
-          echo "screendump screenshots/boot_stage_2.ppm" | socat - UNIX-CONNECT:qemu-monitor.sock
+          # Stage 2: Kernel/Init
+          sleep 30
+          take_screenshot "boot_stage_2" 10
 
-          # Stage 3: System Init (after 90s)
-          sleep 90
-          echo "screendump screenshots/boot_stage_3.ppm" | socat - UNIX-CONNECT:qemu-monitor.sock
+          # Stage 3: System Init
+          sleep 30
+          take_screenshot "boot_stage_3" 10
 
           # Cleanup
           kill $QEMU_PID
@@ -91,8 +110,19 @@ jobs:
             rm "$f"
           done
 
+      - name: Verify Boot Success
+        run: |
+          if grep -q "Reached target Multi-User System" serial.log; then
+            echo "Boot successful!"
+          else
+            echo "Boot failed or timed out. Check serial.log for details."
+            cat serial.log
+            exit 1
+          fi
+
       - name: Upload Screenshots
         uses: actions/upload-artifact@v4
         with:
           name: boot-screenshots
           path: screenshots/*.png
+          retention-days: 3

@@ -58,22 +58,24 @@ jobs:
           ISO_FILE=$(ls iso-artifact/*.iso)
           mkdir -p screenshots
 
-          # Start QEMU in background with monitor on a socket and serial to file
+          # Start QEMU with proper EFI firmware and increased resources
           qemu-system-x86_64 \
-            -m 2G \
+            -m 4G \
             -cdrom "$ISO_FILE" \
             -boot d \
             -display none \
             -vga virtio \
-            -serial file:serial.log \
-            -monitor unix:qemu-monitor.sock,server,nowait &
+            -bios /usr/share/edk2-ovmf/x64/OVMF.fd \
+            -serial stdio \
+            -monitor unix:qemu-monitor.sock,server,nowait \
+            2>&1 | tee serial.log &
 
           QEMU_PID=$!
 
           echo "Waiting for boot to complete..."
 
           # Wait for Multi-User System target with extended timeout
-          BOOT_TIMEOUT=600  # 10 minutes maximum
+          BOOT_TIMEOUT=900  # 15 minutes maximum
           START_TIME=$(date +%s)
 
           while true; do
@@ -85,6 +87,8 @@ jobs:
             ELAPSED=$(($(date +%s) - START_TIME))
             if [ $ELAPSED -gt $BOOT_TIMEOUT ]; then
               echo "Boot timeout after ${BOOT_TIMEOUT}s"
+              echo "Last 50 lines of serial.log:"
+              tail -50 serial.log
               break
             fi
 
@@ -99,6 +103,7 @@ jobs:
 
           # Cleanup
           kill $QEMU_PID 2>/dev/null || true
+          wait $QEMU_PID 2>/dev/null || true
 
           # Convert PPM to PNG
           for f in screenshots/*.ppm; do
